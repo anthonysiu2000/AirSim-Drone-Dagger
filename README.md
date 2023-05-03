@@ -1,5 +1,6 @@
 # Learning Visuomotor Policies for Aerial Navigation Using Cross-Modal Representations
 
+
 ![Teaser](figs/giphy.gif) 
 
 This repository provides a code base to evaluate and train models from the paper "*Learning Visuomotor Policies for Aerial Navigation Using Cross-Modal Representations*". 
