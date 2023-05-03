@@ -2,21 +2,37 @@ import tensorflow as tf
 from tensorflow.keras import Model
 from tensorflow.keras.activations import softplus, relu
 from tensorflow.keras.backend import random_normal
-from tensorflow.keras.layers import Dense, Flatten, Conv2D, BatchNormalization, Lambda, Concatenate, Conv2DTranspose, Reshape
-import dronet
-import decoders
-import transformer
+from tensorflow.keras.layers import (
+    Dense,
+    Flatten,
+    Conv2D,
+    BatchNormalization,
+    Lambda,
+    Concatenate,
+    Conv2DTranspose,
+    Reshape,
+)
+import os
+
+import racing_models.dronet as dronet
+import racing_models.decoders as decoders
+import racing_models.transformer as transformer
+
+# import dronet
+# import decoders
+# import transformer
+
 
 # model definition class
 class Cmvae(Model):
     def __init__(self, n_z, gate_dim=4, res=96, trainable_model=True):
         super(Cmvae, self).__init__()
         # create the 3 base models:
-        self.q_img = dronet.Dronet(num_outputs=n_z*2, include_top=True)
+        self.q_img = dronet.Dronet(num_outputs=n_z * 2, include_top=True)
         self.p_img = decoders.ImgDecoder()
         self.p_gate = decoders.GateDecoder(gate_dim=gate_dim)
         # Create sampler
-        self.mean_params = Lambda(lambda x: x[:, : n_z])
+        self.mean_params = Lambda(lambda x: x[:, :n_z])
         self.stddev_params = Lambda(lambda x: x[:, n_z:])
 
     def call(self, x, mode):
@@ -68,19 +84,20 @@ class Cmvae(Model):
             gate_recon = self.p_gate(z)
             return img_recon, gate_recon
 
+
 # model definition class
 class CmvaeDirect(Model):
     def __init__(self, n_z, gate_dim=4, res=96, trainable_model=True):
         super(CmvaeDirect, self).__init__()
         # create the base models:
-        self.q_img = dronet.Dronet(num_outputs=n_z*2, include_top=True)
+        self.q_img = dronet.Dronet(num_outputs=n_z * 2, include_top=True)
         self.p_img = decoders.ImgDecoder()
         self.p_R = transformer.NonLinearTransformer()
         self.p_Theta = transformer.NonLinearTransformer()
         self.p_Psi = transformer.NonLinearTransformer()
         self.p_Phi = transformer.NonLinearTransformer()
         # Create sampler
-        self.mean_params = Lambda(lambda x: x[:, : n_z])
+        self.mean_params = Lambda(lambda x: x[:, :n_z])
         self.stddev_params = Lambda(lambda x: x[:, n_z:])
         self.R_params = Lambda(lambda x: x[:, 0])
         self.Theta_params = Lambda(lambda x: x[:, 1])
@@ -99,7 +116,15 @@ class CmvaeDirect(Model):
         z = means + eps * stddev
         r_params, theta_params, psi_params, phi_params = self.extract_gate_params(z)
         if mode == 0:
-            gate_recon = tf.keras.layers.concatenate([self.p_R(r_params), self.p_Theta(theta_params), self.p_Psi(psi_params), self.p_Phi(phi_params)], axis=1)
+            gate_recon = tf.keras.layers.concatenate(
+                [
+                    self.p_R(r_params),
+                    self.p_Theta(theta_params),
+                    self.p_Psi(psi_params),
+                    self.p_Phi(phi_params),
+                ],
+                axis=1,
+            )
             img_recon = self.p_img(z)
             return img_recon, gate_recon, means, stddev, z
         elif mode == 1:
@@ -108,7 +133,15 @@ class CmvaeDirect(Model):
             return img_recon, gate_recon, means, stddev, z
         elif mode == 2:
             img_recon = False
-            gate_recon = tf.keras.layers.concatenate([self.p_R(r_params), self.p_Theta(theta_params), self.p_Psi(psi_params), self.p_Phi(phi_params)], axis=1)
+            gate_recon = tf.keras.layers.concatenate(
+                [
+                    self.p_R(r_params),
+                    self.p_Theta(theta_params),
+                    self.p_Psi(psi_params),
+                    self.p_Phi(phi_params),
+                ],
+                axis=1,
+            )
             return img_recon, gate_recon, means, stddev, z
 
     def encode(self, x):
@@ -126,7 +159,15 @@ class CmvaeDirect(Model):
         # 2: z -> gate
         r_params, theta_params, psi_params, phi_params = self.extract_gate_params(z)
         if mode == 0:
-            gate_recon = tf.keras.layers.concatenate([self.p_R(r_params), self.p_Theta(theta_params), self.p_Psi(psi_params), self.p_Phi(phi_params)], axis=1)
+            gate_recon = tf.keras.layers.concatenate(
+                [
+                    self.p_R(r_params),
+                    self.p_Theta(theta_params),
+                    self.p_Psi(psi_params),
+                    self.p_Phi(phi_params),
+                ],
+                axis=1,
+            )
             img_recon = self.p_img(z)
             return img_recon, gate_recon
         elif mode == 1:
@@ -134,7 +175,15 @@ class CmvaeDirect(Model):
             gate_recon = False
             return img_recon, gate_recon
         elif mode == 2:
-            gate_recon = tf.keras.layers.concatenate([self.p_R(r_params), self.p_Theta(theta_params), self.p_Psi(psi_params), self.p_Phi(phi_params)], axis=1)
+            gate_recon = tf.keras.layers.concatenate(
+                [
+                    self.p_R(r_params),
+                    self.p_Theta(theta_params),
+                    self.p_Psi(psi_params),
+                    self.p_Phi(phi_params),
+                ],
+                axis=1,
+            )
             img_recon = False
             return img_recon, gate_recon
 
