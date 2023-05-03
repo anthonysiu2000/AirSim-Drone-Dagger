@@ -16,6 +16,7 @@ batch_size = 32
 epochs = 50
 n_z = 10
 latent_space_constraints = True
+capsule_network = True
 img_res = 64
 max_size = None  # default is None
 learning_rate = 1e-4
@@ -150,9 +151,9 @@ print('Done with dataset')
 
 # create model
 if latent_space_constraints is True:
-    model = racing_models.cmvae.CmvaeDirect(n_z=n_z, gate_dim=4, res=img_res, trainable_model=True)
+    model = racing_models.cmvae.CmvaeDirect(n_z=n_z, gate_dim=4, res=img_res, trainable_model=True, capsule_network=capsule_network)
 else:
-    model = racing_models.cmvae.Cmvae(n_z=n_z, gate_dim=4, res=img_res, trainable_model=True)
+    model = racing_models.cmvae.Cmvae(n_z=n_z, gate_dim=4, res=img_res, trainable_model=True, capsule_network=capsule_network)
 
 # create optimizer
 optimizer = tf.keras.optimizers.Adam(lr=learning_rate)

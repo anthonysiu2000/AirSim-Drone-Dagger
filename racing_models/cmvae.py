@@ -17,6 +17,7 @@ import os
 import racing_models.dronet as dronet
 import racing_models.decoders as decoders
 import racing_models.transformer as transformer
+import racing_models.capsnet as capsnet
 
 # import dronet
 # import decoders
@@ -25,10 +26,13 @@ import racing_models.transformer as transformer
 
 # model definition class
 class Cmvae(Model):
-    def __init__(self, n_z, gate_dim=4, res=96, trainable_model=True):
+    def __init__(self, n_z, gate_dim=4, res=96, trainable_model=True, capsule_network=False):
         super(Cmvae, self).__init__()
         # create the 3 base models:
-        self.q_img = dronet.Dronet(num_outputs=n_z * 2, include_top=True)
+        if capsule_network:
+            self.q_img = capsnet.CapsuleDronet(num_outputs=n_z * 2, include_top=True)
+        else:
+            self.q_img = dronet.Dronet(num_outputs=n_z * 2, include_top=True)
         self.p_img = decoders.ImgDecoder()
         self.p_gate = decoders.GateDecoder(gate_dim=gate_dim)
         # Create sampler
@@ -87,10 +91,13 @@ class Cmvae(Model):
 
 # model definition class
 class CmvaeDirect(Model):
-    def __init__(self, n_z, gate_dim=4, res=96, trainable_model=True):
+    def __init__(self, n_z, gate_dim=4, res=96, trainable_model=True, capsule_network=False):
         super(CmvaeDirect, self).__init__()
         # create the base models:
-        self.q_img = dronet.Dronet(num_outputs=n_z * 2, include_top=True)
+        if capsule_network:
+            self.q_img = capsnet.CapsuleDronet(num_outputs=n_z * 2, include_top=True)
+        else:
+            self.q_img = dronet.Dronet(num_outputs=n_z * 2, include_top=True)
         self.p_img = decoders.ImgDecoder()
         self.p_R = transformer.NonLinearTransformer()
         self.p_Theta = transformer.NonLinearTransformer()

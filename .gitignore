@@ -1,2 +1,5 @@
 model_outputs/*
+airsim_binaries/*
+airsim_datasets/*
+il_datasets/*
 *.pyc
