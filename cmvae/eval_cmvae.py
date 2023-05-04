@@ -12,10 +12,11 @@ import racing_models.cmvae
 import racing_utils
 
 # DEFINE TESTING META PARAMETERS
-data_dir = '/home/rb/all_files/airsim_datasets/soccer_1k'
+data_dir = 'airsim_datasets/soccer_50k'
 read_table = True
 latent_space_constraints = True
-weights_path = '/home/rb/all_files/model_outputs/cmvae_con/cmvae_model_40.ckpt'
+capsule_network = True
+weights_path = 'model_outputs/cmvae_capsule_con/cmvae_model_55.ckpt'
 
 n_z = 10
 img_res = 64
@@ -40,8 +41,46 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '1'
 os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
 
 # Load test dataset
+train_ds, test_ds = racing_utils.dataset_utils.create_dataset_csv(data_dir, 16, img_res)
 images_np, raw_table = racing_utils.dataset_utils.create_test_dataset_csv(data_dir, img_res, read_table=read_table)
 print('Done with dataset')
+
+def compute_loss_unsupervised(img_gt, gate_gt, img_recon, gate_recon, means, stddev, mode):
+    # compute reconstruction loss
+    if mode == 0:
+        img_loss = tf.losses.mean_squared_error(img_gt, img_recon)
+        # img_loss = tf.losses.mean_absolute_error(img_gt, img_recon)
+        gate_loss = tf.losses.mean_squared_error(gate_gt, gate_recon)
+        kl_loss = -0.5 * tf.reduce_mean(tf.reduce_sum((1 + stddev - tf.math.pow(means, 2) - tf.math.exp(stddev)), axis=1))
+    # elif mode == 1:
+    #     # labels = tf.reshape(labels, predictions.shape)
+    #     # recon_loss = tf.losses.mean_squared_error(labels, predictions)
+    #     # recon_loss = loss_object(labels, predictions)
+    # print('Predictions: {}'.format(predictions))
+    # print('Labels: {}'.format(labels))
+    # print('Lrec: {}'.format(recon_loss))
+    # copute KL loss: D_KL(Q(z|X,y) || P(z|X))
+    return img_loss, gate_loss, kl_loss
+
+def test(img_gt, gate_gt, mode):
+    img_recon, gate_recon, means, stddev, z = model(img_gt, mode)
+    img_loss, gate_loss, kl_loss = compute_loss_unsupervised(img_gt, gate_gt, img_recon, gate_recon, means, stddev, mode)
+    img_loss = tf.reduce_mean(img_loss)
+    gate_loss = tf.reduce_mean(gate_loss)
+    if mode == 0:
+        test_loss_rec_img.update_state(img_loss)
+        test_loss_rec_gate.update_state(gate_loss)
+        test_loss_kl.update_state(kl_loss)
+
+def train(img_gt, gate_gt, mode):
+    img_recon, gate_recon, means, stddev, z = model(img_gt, mode)
+    img_loss, gate_loss, kl_loss = compute_loss_unsupervised(img_gt, gate_gt, img_recon, gate_recon, means, stddev, mode)
+    img_loss = tf.reduce_mean(img_loss)
+    gate_loss = tf.reduce_mean(gate_loss)
+    if mode == 0:
+        train_loss_rec_img.update_state(img_loss)
+        train_loss_rec_gate.update_state(gate_loss)
+        train_loss_kl.update_state(kl_loss)
 
 images_np = images_np[:1000,:]
 if read_table is True:
@@ -49,11 +88,39 @@ if read_table is True:
 
 # create model
 if latent_space_constraints is True:
-    model = racing_models.cmvae.CmvaeDirect(n_z=n_z, gate_dim=4, res=img_res, trainable_model=True)
+    model = racing_models.cmvae.CmvaeDirect(n_z=n_z, gate_dim=4, res=img_res, trainable_model=True, capsule_network=capsule_network)
 else:
-    model = racing_models.cmvae.Cmvae(n_z=n_z, gate_dim=4, res=img_res, trainable_model=True)
+    model = racing_models.cmvae.Cmvae(n_z=n_z, gate_dim=4, res=img_res, trainable_model=True, capsule_network=capsule_network)
 
 model.load_weights(weights_path)
+
+
+
+# define metrics
+train_loss_rec_img = tf.keras.metrics.Mean(name='train_loss_rec_img')
+train_loss_rec_gate = tf.keras.metrics.Mean(name='train_loss_rec_gate')
+train_loss_kl = tf.keras.metrics.Mean(name='train_loss_kl')
+test_loss_rec_img = tf.keras.metrics.Mean(name='test_loss_rec_img')
+test_loss_rec_gate = tf.keras.metrics.Mean(name='test_loss_rec_gate')
+test_loss_kl = tf.keras.metrics.Mean(name='test_loss_kl')
+
+mode = 0
+flag = True
+# print('MODE NOW: {}'.format(mode))
+for train_images, train_labels in train_ds:
+    train(train_images, train_labels, mode)
+for test_images, test_labels in test_ds:
+    test(test_images, test_labels, mode)
+
+if mode == 0:
+    epoch = 0
+    print('Epoch {} | TRAIN: L_img: {}, L_gate: {}, L_kl: {}, L_tot: {} | TEST: L_img: {}, L_gate: {}, L_kl: {}, L_tot: {}'
+            .format(0, train_loss_rec_img.result(), train_loss_rec_gate.result(), train_loss_kl.result(),
+                    train_loss_rec_img.result()+train_loss_rec_gate.result()+train_loss_kl.result(),
+                    test_loss_rec_img.result(), test_loss_rec_gate.result(), test_loss_kl.result(),
+                    test_loss_rec_img.result() + test_loss_rec_gate.result() + test_loss_kl.result()
+                    ))
+
 
 img_recon, gate_recon, means, stddev, z = model(images_np, mode=0)
 img_recon = img_recon.numpy()
@@ -84,7 +151,7 @@ for i in range(1, num_imgs_display+1):
     img_display = racing_utils.dataset_utils.convert_bgr2rgb(img_recon[i-1, :])
     plt.axis('off')
     plt.imshow(img_display)
-fig.savefig(os.path.join('/home/rb/Pictures', 'reconstruction_results.png'))
+fig.savefig('reconstruction_results.png')
 plt.show()
 
 # show interpolation btw two images in latent space
@@ -151,7 +218,7 @@ fig2.add_subplot(rows, columns, num_interp_z + 2)
 img_display = racing_utils.dataset_utils.convert_bgr2rgb(images_np[idx_far, :])
 plt.axis('off')
 plt.imshow(img_display)
-fig2.savefig(os.path.join('/home/rb/Pictures', 'reconstruction_interpolation_results.png'))
+fig2.savefig('reconstruction_interpolation_results.png')
 plt.show()
 
 # new plot traveling through latent space
@@ -162,7 +229,7 @@ z_values = racing_utils.geom_utils.interp_vector(z_range_mural[0], z_range_mural
 for i in range(1, z_num_mural*n_z + 1):
     fig3.add_subplot(rows, columns, i)
     z = np.zeros((1, n_z)).astype(np.float32)
-    z[0, (i-1)/columns] = z_values[i%columns-1]
+    z[0, int((i-1)//columns)] = z_values[i%columns-1]
     # print (z)
     img_recon_interp, gate_recon_interp = model.decode(z, mode=0)
     img_recon_interp = img_recon_interp.numpy()
@@ -170,5 +237,5 @@ for i in range(1, z_num_mural*n_z + 1):
     img_display = racing_utils.dataset_utils.convert_bgr2rgb(img_recon_interp)
     plt.axis('off')
     plt.imshow(img_display)
-fig3.savefig(os.path.join('/home/rb/Pictures', 'z_mural.png'))
+fig3.savefig('z_mural.png')
 plt.show()

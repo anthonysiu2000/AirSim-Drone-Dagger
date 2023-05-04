@@ -24,7 +24,7 @@ import racing_utils
 
 # policy options: bc_con, bc_unc, bc_img, bc_reg, bc_full
 policy_type = "bc_con"
-gate_noise = 1.0
+gate_noise = 3.0
 
 ###########################################
 
@@ -146,6 +146,13 @@ if __name__ == "__main__":
         latent_space_constraints = True
         bc_weights_path = "model_outputs/bc_con/bc_model_150.ckpt"
         feature_weights_path = "model_outputs/cmvae_con/cmvae_model_40.ckpt"
+        capsule_network = False
+    if policy_type == "bc_capsule_con":
+        training_mode = "latent"
+        latent_space_constraints = True
+        bc_weights_path = "model_outputs/bc_capsule_con/bc_model_150.ckpt"
+        feature_weights_path = "model_outputs/cmvae_capsule_con/cmvae_model_55.ckpt"
+        capsule_network = True
     elif policy_type == "bc_unc":
         training_mode = "latent"
         latent_space_constraints = False
@@ -156,22 +163,26 @@ if __name__ == "__main__":
         latent_space_constraints = True
         bc_weights_path = "model_outputs/bc_img/bc_model_100.ckpt"
         feature_weights_path = "model_outputs/cmvae_img/cmvae_model_45.ckpt"
+        capsule_network = False
     elif policy_type == "bc_reg":
         training_mode = "reg"
         latent_space_constraints = True
         bc_weights_path = "model_outputs/bc_reg/bc_model_80.ckpt"
         feature_weights_path = "model_outputs/reg/reg_model_25.ckpt"
+        capsule_network = False
     elif policy_type == "bc_full":
         training_mode = "full"
         latent_space_constraints = True
         bc_weights_path = "model_outputs/bc_full/bc_model_120.ckpt"
         feature_weights_path = None
+        capsule_network = False
 
     vel_regressor = vel_regressor.VelRegressor(
         regressor_type=training_mode,
         bc_weights_path=bc_weights_path,
         feature_weights_path=feature_weights_path,
         latent_space_constraints=latent_space_constraints,
+        capsule_network=capsule_network
     )
 
     count = 0

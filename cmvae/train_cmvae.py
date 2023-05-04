@@ -10,16 +10,17 @@ import racing_models.cmvae
 import racing_utils
 
 # DEFINE TRAINING META PARAMETERS
-data_dir = '/home/rb/all_files/airsim_datasets/soccer_1k'
-output_dir = '/home/rb/all_files/model_outputs/cmvae_con'
+data_dir = 'airsim_datasets/soccer_300k'
+output_dir = 'model_outputs/cmvae_capsule_con'
 batch_size = 32
 epochs = 50
 n_z = 10
 latent_space_constraints = True
 capsule_network = True
 img_res = 64
-max_size = None  # default is None
-learning_rate = 1e-4
+max_size = 75000  # default is None
+start = 0
+learning_rate = 4e-5
 
 # CUSTOM TF FUNCTIONS
 @tf.function
@@ -85,7 +86,7 @@ def compute_loss_unsupervised(img_gt, gate_gt, img_recon, gate_recon, means, std
     # copute KL loss: D_KL(Q(z|X,y) || P(z|X))
     return img_loss, gate_loss, kl_loss
 
-@tf.function
+# @tf.function
 def train(img_gt, gate_gt, epoch, mode):
     # freeze the non-utilized weights
     # if mode == 0:
@@ -124,7 +125,7 @@ def train(img_gt, gate_gt, epoch, mode):
     gradients = tape.gradient(total_loss, model.trainable_variables)
     optimizer.apply_gradients(zip(gradients, model.trainable_variables))
 
-@tf.function
+# @tf.function
 def test(img_gt, gate_gt, mode):
     img_recon, gate_recon, means, stddev, z = model(img_gt, mode)
     img_loss, gate_loss, kl_loss = compute_loss_unsupervised(img_gt, gate_gt, img_recon, gate_recon, means, stddev, mode)
@@ -142,11 +143,11 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '0'
 # 3 = INFO, WARNING, and ERROR messages are not printed
 
 # allow growth is possible using an env var in tf2.0
-os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
+# os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
 
 # load dataset
 print('Starting dataset')
-train_ds, test_ds = racing_utils.dataset_utils.create_dataset_csv(data_dir, batch_size, img_res, max_size=max_size)
+train_ds, test_ds = racing_utils.dataset_utils.create_dataset_csv(data_dir, batch_size, img_res, max_size=max_size, start=start)
 print('Done with dataset')
 
 # create model
@@ -154,6 +155,11 @@ if latent_space_constraints is True:
     model = racing_models.cmvae.CmvaeDirect(n_z=n_z, gate_dim=4, res=img_res, trainable_model=True, capsule_network=capsule_network)
 else:
     model = racing_models.cmvae.Cmvae(n_z=n_z, gate_dim=4, res=img_res, trainable_model=True, capsule_network=capsule_network)
+
+start_epoch = 0
+######## TO CONTINUE FROM PREVIOUS RUN
+model.load_weights("model_outputs/cmvae_capsule_con/cmvae_model_54.ckpt")
+start_epoch = 55
 
 # create optimizer
 optimizer = tf.keras.optimizers.Adam(lr=learning_rate)
@@ -175,7 +181,7 @@ if not os.path.isdir(output_dir):
 print('Start training ...')
 mode = 0
 flag = True
-for epoch in range(epochs):
+for epoch in range(start_epoch, epochs + start_epoch):
     # print('MODE NOW: {}'.format(mode))
     for train_images, train_labels in train_ds:
         train(train_images, train_labels, epoch, mode)
@@ -185,7 +191,8 @@ for epoch in range(epochs):
     for test_images, test_labels in test_ds:
         test(test_images, test_labels, mode)
     # save model
-    if epoch % 5 == 0 and epoch > 0:
+    # if epoch % 5 == 0 and epoch > 0:
+    if epoch > 0:
         print('Saving weights to {}'.format(output_dir))
         model.save_weights(os.path.join(output_dir, "cmvae_model_{}.ckpt".format(epoch)))
 

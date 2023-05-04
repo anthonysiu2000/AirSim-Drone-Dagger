@@ -141,38 +141,36 @@ def read_images(data_dir, res, max_size=None):
     print('Done reading {} images.'.format(images_np.shape[0]))
     return images_np
 
-def create_dataset_csv(data_dir, batch_size, res, max_size=None):
+def create_dataset_csv(data_dir, batch_size, res, max_size=None, start=0):
     print('Going to read file list')
     files_list = glob.glob(os.path.join(data_dir, 'images/*.png'))
     print('Done. Starting sorting.')
     files_list.sort()  # make sure we're reading the images in order later
     print('Done. Before images_np init')
     if max_size is not None:
-        size_data = max_size
+        end = min(len(files_list), start + max_size)
     else:
-        size_data = len(files_list)
-    images_np = np.zeros((size_data, res, res, 3)).astype(np.float32)
+        end = len(files_list)
+    images_np = np.zeros((end - start, res, res, 3)).astype(np.float32)
 
     print('Done. Going to read images.')
     idx = 0
     for file in files_list:
-        # read data in BGR format by default!!!
-        # notice that model is going to be trained in BGR
-        im = cv2.imread(file, cv2.IMREAD_COLOR)
-        im = cv2.resize(im, (res, res))
-        im = im / 255.0 * 2.0 - 1.0
-        images_np[idx, :] = im
-        if idx % 10000 == 0:
-            print ('image idx = {}'.format(idx))
+        if idx >= start and idx < end:
+            # read data in BGR format by default!!!
+            # notice that model is going to be trained in BGR
+            im = cv2.imread(file, cv2.IMREAD_COLOR)
+            im = cv2.resize(im, (res, res))
+            im = im / 255.0 * 2.0 - 1.0
+            images_np[idx - start, :] = im
+            if idx % 10000 == 0:
+                print ('image idx = {}'.format(idx))
         idx = idx + 1
-        if idx == size_data:
-            # reached the last point -- exit loop of images
-            break
 
     print('Going to read csv file.')
     # prepare gate R THETA PSI PHI as np array reading from a file
     raw_table = np.loadtxt(data_dir + '/gate_training_data.csv', delimiter=' ')
-    raw_table = raw_table[:size_data, :]
+    raw_table = raw_table[start:end, :]
 
     # sanity check
     if raw_table.shape[0] != images_np.shape[0]:

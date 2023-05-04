@@ -105,6 +105,7 @@ class CapsuleLayer(tf.keras.layers.Layer):
 
 class CapsuleDronet(tf.keras.Model):
     def __init__(self, num_outputs, include_top=True):
+        print("[CapsuleDronet] Starting create_model")
         super(CapsuleDronet, self).__init__()
         self.conv1 = tf.keras.layers.Conv2D(
             filters=32,
@@ -114,58 +115,52 @@ class CapsuleDronet(tf.keras.Model):
             padding="same",
         )
         self.conv2 = tf.keras.layers.Conv2D(
-            filters=64,
+            filters=32,
             kernel_size=3,
             activation="relu",
             data_format="channels_last",
             padding="same",
         )
         self.conv3 = tf.keras.layers.Conv2D(
-            filters=128,
+            filters=64,
             kernel_size=5,
             activation="relu",
             data_format="channels_last",
             padding="same",
         )
-        self.caps1depth = 32
-        self.caps2depth = 64
-        self.caps1_ncaps = 16
+        self.capsdepth_in = 32
+        self.capsdepth_out = 32
         self.maxpool = tf.keras.layers.MaxPooling2D(pool_size=2, strides=2)
-        self.caps1 = None
-        self.caps2 = CapsuleLayer(
-            1,
-            self.caps1_ncaps,
-            128,
-            self.caps2depth,
-            routing_iterations=3,
-            squash_last=False,
-        )
+        self.caps = None
+
         self.dense0 = tf.keras.layers.Dense(units=64, activation="relu")
         self.dense1 = tf.keras.layers.Dense(units=32, activation="relu")
         self.dense2 = tf.keras.layers.Dense(units=num_outputs, activation="linear")
-
-    def call(self, inp):
-        if not self.caps1:
+        print("[CapsuleDronet] Done with create_model")
+    def build(self, inp_shape):
+        inp = tf.zeros(inp_shape)
+        if not self.caps:
             x = self.conv1(inp)
             x = self.maxpool(x)
             x = self.conv2(x)
             x = self.conv3(x)
-            x = tf.reshape(x, [x.shape[0], -1, self.caps1depth])
-            self.caps1 = CapsuleLayer(
-                self.caps1_ncaps,
+            x = tf.reshape(x, [x.shape[0], -1, self.capsdepth_in])
+            self.caps = CapsuleLayer(
+                8,
                 x.shape[1],
-                self.caps2depth,
-                self.caps1depth,
+                self.capsdepth_out,
+                self.capsdepth_in,
                 routing_iterations=3,
                 squash_last=True,
             )
+
+    def call(self, inp):
         x = self.conv1(inp)
         x = self.maxpool(x)
         x = self.conv2(x)
         x = self.conv3(x)
-        x = tf.reshape(x, [x.shape[0], -1, self.caps1depth])
-        x = self.caps1(x)
-        x = self.caps2(x)  # (batch, 1, depth)
+        x = tf.reshape(x, [x.shape[0], -1, self.capsdepth_in])
+        x = self.caps(x)
         x = tf.reshape(x, [x.shape[0], -1])
 
         x = self.dense0(x)

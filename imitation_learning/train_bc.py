@@ -12,20 +12,21 @@ import racing_utils
 ###########################################
 
 # DEFINE TRAINING META PARAMETERS
-base_path = '/home/rb/all_files'
-data_dir_list = ['/home/rb/all_files/il_datasets/bc_v5_n0',
-                 '/home/rb/all_files/il_datasets/bc_v5_n1',
-                 '/home/rb/all_files/il_datasets/bc_v5_n2',
-                 '/home/rb/all_files/il_datasets/bc_v5_n3']
-output_dir = '/home/rb/all_files/model_outputs/bc_test'
+base_path = '.'
+data_dir_list = ['il_datasets/bc_v5_n0',
+                 'il_datasets/bc_v5_n1',
+                 'il_datasets/bc_v5_n2',
+                 'il_datasets/bc_v5_n3']
+output_dir = 'model_outputs/bc_capsule_con'
 
 training_mode = 'latent'  # 'full' or 'latent' or 'reg'
-cmvae_weights_path = '/home/rb/all_files/model_outputs/cmvae_con/cmvae_model_40.ckpt'
-# cmvae_weights_path = '/home/rb/all_files/model_outputs/cmvae_unc/cmvae_model_65.ckpt'
-# cmvae_weights_path = '/home/rb/all_files/model_outputs/cmvae_img/cmvae_model_45.ckpt'
+cmvae_weights_path = 'model_outputs/cmvae_capsule_con/cmvae_model_55.ckpt'
+capsule_network = True
+# cmvae_weights_path = 'model_outputs/cmvae_unc/cmvae_model_65.ckpt'
+# cmvae_weights_path = 'model_outputs/cmvae_img/cmvae_model_45.ckpt'
 
 # training_mode = 'reg'  # 'full' or 'latent' or 'reg'
-# reg_weights_path = '/home/rb/all_files/model_outputs/reg/reg_model_25.ckpt'
+# reg_weights_path = 'model_outputs/reg/reg_model_25.ckpt'
 
 # training_mode = 'full'  # 'full' or 'latent' or 'reg'
 # no auxiliary feature extraction weights
@@ -52,7 +53,7 @@ def compute_loss(labels, predictions):
     return recon_loss
 
 
-@tf.function
+# @tf.function
 def train(images, labels, epoch, training_mode):
     with tf.GradientTape() as tape:
         if training_mode == 'full':
@@ -69,7 +70,7 @@ def train(images, labels, epoch, training_mode):
     train_loss_rec_v(recon_loss)
 
 
-@tf.function
+# @tf.function
 def test(images, labels, training_mode):
     if training_mode == 'full':
         predictions = bc_model(images)
@@ -105,12 +106,12 @@ if training_mode == 'full':
     bc_model = racing_models.bc_full.BcFull()
 elif training_mode == 'latent':
     # cmvae_model = racing_models.cmvae.Cmvae(n_z=n_z, gate_dim=4, res=img_res, trainable_model=True)
-    cmvae_model = racing_models.cmvae.CmvaeDirect(n_z=n_z, gate_dim=4, res=img_res, trainable_model=True)
+    cmvae_model = racing_models.cmvae.CmvaeDirect(n_z=n_z, gate_dim=4, res=img_res, trainable_model=True, capsule_network=capsule_network)
     cmvae_model.load_weights(cmvae_weights_path)
     cmvae_model.trainable = False
     bc_model = racing_models.bc_latent.BcLatent()
 elif training_mode == 'reg':
-    reg_model = model = racing_models.dronet.Dronet(num_outputs=4, include_top=True)
+    reg_model = model = racing_models.dronet.Dronet(num_outputs=4, include_top=True, capsule_network=capsule_network)
     reg_model.load_weights(reg_weights_path)
     reg_model.trainable = False
     bc_model = racing_models.bc_latent.BcLatent()

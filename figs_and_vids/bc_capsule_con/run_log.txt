@@ -1,0 +1,99 @@
+Avg network time over 50 iterations: 28.1265640259 ms | 35.5535784278 Hz
+Avg loop time over 50 iterations: 51.8590164185 ms | 19.2830498737 Hz
+Avg network time over 50 iterations: 25.8830165863 ms | 38.6353729932 Hz
+Avg loop time over 50 iterations: 47.9722976685 ms | 20.8453638579 Hz
+Avg network time over 50 iterations: 25.9385824203 ms | 38.5526079951 Hz
+Avg loop time over 50 iterations: 47.3241090775 ms | 21.1308785204 Hz
+Avg network time over 50 iterations: 24.4959926605 ms | 40.8230037402 Hz
+Avg loop time over 50 iterations: 45.6314849854 ms | 21.9146933377 Hz
+Avg network time over 50 iterations: 26.7160367966 ms | 37.4307015526 Hz
+Avg loop time over 50 iterations: 48.134522438 ms | 20.7751100322 Hz
+Avg network time over 50 iterations: 26.0020303726 ms | 38.4585351863 Hz
+Avg loop time over 50 iterations: 47.0719575882 ms | 21.2440708064 Hz
+Avg network time over 50 iterations: 26.7325973511 ms | 37.4075136384 Hz
+Avg loop time over 50 iterations: 48.7423753738 ms | 20.5160292729 Hz
+Avg network time over 50 iterations: 26.9641304016 ms | 37.0863063301 Hz
+Avg loop time over 50 iterations: 48.5995483398 ms | 20.5763229116 Hz
+Avg network time over 50 iterations: 26.3733053207 ms | 37.9171282415 Hz
+Avg loop time over 50 iterations: 48.5496854782 ms | 20.5974557847 Hz
+Avg network time over 50 iterations: 27.2339296341 ms | 36.7189022457 Hz
+Avg loop time over 50 iterations: 48.74563694 ms | 20.5146565472 Hz
+Avg network time over 50 iterations: 26.2603902817 ms | 38.0801651946 Hz
+Avg loop time over 50 iterations: 47.526102066 ms | 21.04106915 Hz
+Avg network time over 50 iterations: 26.813583374 ms | 37.2945303897 Hz
+Avg loop time over 50 iterations: 48.6999225616 ms | 20.5339135547 Hz
+Avg network time over 50 iterations: 26.6253137589 ms | 37.5582428458 Hz
+Avg loop time over 50 iterations: 48.1768846512 ms | 20.7568423579 Hz
+Avg network time over 50 iterations: 26.7798948288 ms | 37.3414461256 Hz
+Avg loop time over 50 iterations: 48.6584186554 ms | 20.551428255 Hz
+Avg network time over 50 iterations: 25.2215242386 ms | 39.6486743045 Hz
+Avg loop time over 50 iterations: 46.6426134109 ms | 21.4396219866 Hz
+Avg network time over 50 iterations: 25.925412178 ms | 38.5721929176 Hz
+Avg loop time over 50 iterations: 47.6423072815 ms | 20.9897474967 Hz
+Avg network time over 50 iterations: 25.3854751587 ms | 39.3926051708 Hz
+Avg loop time over 50 iterations: 47.0324039459 ms | 21.2619367947 Hz
+Avg network time over 50 iterations: 26.3814592361 ms | 37.9054089104 Hz
+Avg loop time over 50 iterations: 48.0220603943 ms | 20.8237629079 Hz
+Avg network time over 50 iterations: 26.1034107208 ms | 38.3091700428 Hz
+Avg loop time over 50 iterations: 47.6820325851 ms | 20.9722603208 Hz
+Avg network time over 50 iterations: 26.4130544662 ms | 37.8600665545 Hz
+Avg loop time over 50 iterations: 47.4749565125 ms | 21.0637370408 Hz
+Avg network time over 50 iterations: 26.9609689713 ms | 37.0906550527 Hz
+Avg loop time over 50 iterations: 47.8302097321 ms | 20.9072886279 Hz
+Avg network time over 50 iterations: 26.6786718369 ms | 37.4831253263 Hz
+Avg loop time over 50 iterations: 48.7232923508 ms | 20.5240646055 Hz
+Avg network time over 50 iterations: 26.3995456696 ms | 37.8794397645 Hz
+Avg loop time over 50 iterations: 48.1697940826 ms | 20.7598977543 Hz
+Avg network time over 50 iterations: 26.7567634583 ms | 37.3737280131 Hz
+Avg loop time over 50 iterations: 48.4784078598 ms | 20.6277401455 Hz
+Avg network time over 50 iterations: 26.7503929138 ms | 37.3826284803 Hz
+Avg loop time over 50 iterations: 48.9618492126 ms | 20.4240651871 Hz
+Avg network time over 50 iterations: 26.331243515 ms | 37.9776974616 Hz
+Avg loop time over 50 iterations: 47.610001564 ms | 21.0039900682 Hz
+Avg network time over 50 iterations: 26.3750362396 ms | 37.9146398479 Hz
+Avg loop time over 50 iterations: 47.9657649994 ms | 20.84820288 Hz
+Avg network time over 50 iterations: 25.6831264496 ms | 38.9360696395 Hz
+Avg loop time over 50 iterations: 46.3835859299 ms | 21.5593507909 Hz
+Avg network time over 50 iterations: 26.2404632568 ms | 38.1090832967 Hz
+Avg loop time over 50 iterations: 47.6812028885 ms | 20.9726252574 Hz
+Avg network time over 50 iterations: 26.068816185 ms | 38.3600080995 Hz
+Avg loop time over 50 iterations: 47.5562810898 ms | 21.0277165725 Hz
+Avg network time over 50 iterations: 26.4459514618 ms | 37.8129711629 Hz
+Avg loop time over 50 iterations: 48.5114574432 ms | 20.6136870072 Hz
+Avg network time over 50 iterations: 26.0763692856 ms | 38.3488970051 Hz
+Avg loop time over 50 iterations: 47.6916742325 ms | 20.9680204374 Hz
+Avg network time over 50 iterations: 25.4532194138 ms | 39.2877609604 Hz
+Avg loop time over 50 iterations: 46.7541122437 ms | 21.3884929477 Hz
+Avg network time over 50 iterations: 26.508641243 ms | 37.723547987 Hz
+Avg loop time over 50 iterations: 47.6548099518 ms | 20.9842406467 Hz
+Avg network time over 50 iterations: 26.9653177261 ms | 37.0846733629 Hz
+Avg loop time over 50 iterations: 47.9483413696 ms | 20.8557787701 Hz
+Avg network time over 50 iterations: 26.8942546844 ms | 37.1826626814 Hz
+Avg loop time over 50 iterations: 47.9986572266 ms | 20.8339161506 Hz
+Avg network time over 50 iterations: 26.6781282425 ms | 37.4838890836 Hz
+Avg loop time over 50 iterations: 48.6742258072 ms | 20.5447540956 Hz
+
+
+noise level 0:
+run 1: 24/24, 0 collisions  <- these are the "success rates": compare them to those in the paper
+run 2: 24/24, 0 collisions  unfortunately, these aren't good, but we only tried one set of
+run 3: 24/24, 2 collisions  hyperparams because of compute constraints
+
+noise level 1:
+run 1: 24/24, zero collisions
+run 2: 24/24, 0 collisions
+run 3: 4/24 (got stuck), 1 collision
+
+noise level 2:
+run 1: 4/24 (got stuck), 1 collision
+run 2: 10/24 (got stuck), 1 collision
+run 3: 6/24 (flew into the woods), 1 collision
+
+noise level 3:
+run 1: 6/24 (flew into woods), 4 collisions
+run 2: 3/24 (flew into woods), 0 collisions
+run 3: 3/24 (got stuck), 3 collisions
+
+
+
+
