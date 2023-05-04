@@ -36,7 +36,7 @@ batch_size = 32
 epochs = 400
 img_res = 64
 max_size = None  # default is None
-learning_rate = 1e-2  # 1e-2 for latent, 1e-3 for full
+learning_rate = 1e-3  # 1e-2 for latent, 1e-3 for full
 
 ###########################################
 # CUSTOM FUNCTIONS

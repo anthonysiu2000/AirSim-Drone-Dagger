@@ -1,15 +1,17 @@
 from __future__ import division
 import time
 import numpy as np
-import vel_regressor
 import cv2
 import math
 import tensorflow as tf
+import dagger
 
 import os, sys
 import airsimdroneracingvae
 import airsimdroneracingvae.types
 import airsimdroneracingvae.utils
+import vel_regressor
+import racing_models
 
 # import utils
 curr_dir = os.path.dirname(os.path.abspath(__file__))
@@ -20,12 +22,14 @@ import racing_utils
 
 ###########################################
 
-# DEFINE DEPLOYMENT META PARAMETERS
+# DEFINE DAGGER META PARAMETERS
 
 # policy options: bc_con, bc_unc, bc_img, bc_reg, bc_full
-policy_type = "bc_con"
-gate_noise = 1.0
-
+expert_type = "bc_full"
+batch_size = 32
+learning_rate = 0.001
+dagger_iters = 300
+rollout_length = 400
 ###########################################
 
 
@@ -74,8 +78,7 @@ os.environ["TF_FORCE_GPU_ALLOW_GROWTH"] = "true"
 # tf.debugging.set_log_device_placement(True)
 
 
-def generate_rollout(dagger):
-    # set airsim client
+def generate_rollout(dagger, gate_noise, rollout_length, bc):
     client = airsimdroneracingvae.MultirotorClient()
     client.confirmConnection()
     # client.simLoadLevel('Soccer_Field_Easy')
@@ -141,50 +144,17 @@ def generate_rollout(dagger):
     time.sleep(1.0)
     img_res = 64
 
-    if policy_type == "bc_con":
-        training_mode = "latent"
-        latent_space_constraints = True
-        bc_weights_path = "model_outputs/bc_con/bc_model_150.ckpt"
-        feature_weights_path = "model_outputs/cmvae_con/cmvae_model_40.ckpt"
-    elif policy_type == "bc_unc":
-        training_mode = "latent"
-        latent_space_constraints = False
-        bc_weights_path = "model_outputs/bc_unc/bc_model_150.ckpt"
-        feature_weights_path = "model_outputs/cmvae_unc/cmvae_model_45.ckpt"
-    elif policy_type == "bc_img":
-        training_mode = "latent"
-        latent_space_constraints = True
-        bc_weights_path = "model_outputs/bc_img/bc_model_100.ckpt"
-        feature_weights_path = "model_outputs/cmvae_img/cmvae_model_45.ckpt"
-    elif policy_type == "bc_reg":
-        training_mode = "reg"
-        latent_space_constraints = True
-        bc_weights_path = "model_outputs/bc_reg/bc_model_80.ckpt"
-        feature_weights_path = "model_outputs/reg/reg_model_25.ckpt"
-    elif policy_type == "bc_full":
-        training_mode = "full"
-        latent_space_constraints = True
-        bc_weights_path = "model_outputs/bc_full/bc_model_120.ckpt"
-        feature_weights_path = None
-
-    vel_regressor = vel_regressor.VelRegressor(
-        regressor_type=training_mode,
-        bc_weights_path=bc_weights_path,
-        feature_weights_path=feature_weights_path,
-        latent_space_constraints=latent_space_constraints,
-    )
-
     count = 0
     max_count = 50
     times_net = np.zeros((max_count,))
     times_loop = np.zeros((max_count,))
-    while True:
+    for _ in range(rollout_length):
         start_time = time.time()
         img_batch_1, cam_pos, cam_orientation = process_image(client, img_res)
         elapsed_time_net = time.time() - start_time
         times_net[count] = elapsed_time_net
         p_o_b = airsimdroneracingvae.types.Pose(cam_pos, cam_orientation)
-        vel_cmd = vel_regressor.predict_velocities(img_batch_1, p_o_b)
+        vel_cmd = dagger.predict_velocities(img_batch_1, p_o_b, bc)
         # print(vel_cmd)
         # print('Before sending vel cmd')
         move_drone(client, vel_cmd)
@@ -197,3 +167,64 @@ def generate_rollout(dagger):
             count = 0
             avg_time = np.mean(times_net)
             avg_freq = 1.0 / avg_time
+
+if __name__ == "__main__":
+    if expert_type == "bc_con":
+        training_mode = "latent"
+        expert_latent_space_constraints = True
+        expert_weights_path = "model_outputs/bc_con/bc_model_150.ckpt"
+        expert_feature_weights_path = "model_outputs/cmvae_con/cmvae_model_40.ckpt"
+        expert_capsule_network = False
+    elif expert_type == "bc_unc":
+        training_mode = "latent"
+        expert_latent_space_constraints = False
+        expert_weights_path = "model_outputs/bc_unc/bc_model_150.ckpt"
+        expert_feature_weights_path = "model_outputs/cmvae_unc/cmvae_model_45.ckpt"
+        expert_capsule_network = False
+    elif expert_type == "bc_img":
+        training_mode = "latent"
+        expert_latent_space_constraints = True
+        expert_weights_path = "model_outputs/bc_img/bc_model_100.ckpt"
+        expert_feature_weights_path = "model_outputs/cmvae_img/cmvae_model_45.ckpt"
+    elif expert_type == "bc_reg":
+        training_mode = "reg"
+        expert_latent_space_constraints = True
+        expert_weights_path = "model_outputs/bc_reg/bc_model_80.ckpt"
+        expert_feature_weights_path = "model_outputs/reg/reg_model_25.ckpt"
+        expert_capsule_network = False
+    elif expert_type == "bc_full":
+        training_mode = "full"
+        expert_latent_space_constraints = True
+        expert_weights_path = "model_outputs/bc_full/bc_model_120.ckpt"
+        expert_feature_weights_path = None
+        expert_capsule_network = False
+
+    learner_weights_path = "model_outputs/bc_img/bc_model_100.ckpt"
+    learner_feature_weights_path = "model_outputs/cmvae_img/cmvae_model_45.ckpt"
+    learner_save_path = "model_outputs/dagger_img"
+    learner_capsnet = False
+
+    # create model
+    learner_encoder = racing_models.cmvae.CmvaeDirect(n_z=10, gate_dim=4, res=64,
+                                                       trainable_model=False,
+                                                       capsule_network=learner_capsnet)
+    learner_encoder.load_weights(learner_feature_weights_path).expect_partial()
+    learner_model = racing_models.bc_latent.BcLatent()
+    learner_model.load_weights(learner_weights_path).expect_partial()
+    d = dagger.DAgger(
+        learner_encoder,
+        learner_model,
+        training_mode,
+        expert_weights_path,
+        expert_feature_weights_path=expert_feature_weights_path,
+        expert_latent_space_constraints=expert_latent_space_constraints,
+        expert_use_capsnet=expert_capsule_network,
+        batch_size=batch_size,
+        learning_rate=learning_rate
+    )
+    
+    for i in range(dagger_iters):
+        generate_rollout(d, 0.0, rollout_length, bc=(i < 10))
+        loss = d.train_learner()
+        print("epoch {0}: [DAgger] train loss:{1}".format(i, loss))
+        d.learner_model.save_weights(os.path.join(learner_save_path, "dagger_model_{0}.ckpt".format(i)))

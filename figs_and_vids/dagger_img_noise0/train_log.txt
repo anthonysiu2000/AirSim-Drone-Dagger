@@ -1,0 +1,164 @@
+epoch 0: [DAgger] train loss:0.00816239066458
+Connected!
+Client Ver:1 (Min Req: 1), Server Ver:1 (Min Req: 1)
+
+epoch 1: [DAgger] train loss:0.00475808972726
+Connected!
+Client Ver:1 (Min Req: 1), Server Ver:1 (Min Req: 1)
+
+epoch 2: [DAgger] train loss:0.00374290181973
+Connected!
+Client Ver:1 (Min Req: 1), Server Ver:1 (Min Req: 1)
+
+epoch 3: [DAgger] train loss:0.00341242684168
+Connected!
+Client Ver:1 (Min Req: 1), Server Ver:1 (Min Req: 1)
+
+epoch 4: [DAgger] train loss:0.00376510550383
+Connected!
+Client Ver:1 (Min Req: 1), Server Ver:1 (Min Req: 1)
+
+epoch 5: [DAgger] train loss:0.00383679881537
+Connected!
+Client Ver:1 (Min Req: 1), Server Ver:1 (Min Req: 1)
+
+epoch 6: [DAgger] train loss:0.00363890409194
+Connected!
+Client Ver:1 (Min Req: 1), Server Ver:1 (Min Req: 1)
+
+epoch 7: [DAgger] train loss:0.00348170132638
+Connected!
+Client Ver:1 (Min Req: 1), Server Ver:1 (Min Req: 1)
+
+epoch 8: [DAgger] train loss:0.00334938764634
+Connected!
+Client Ver:1 (Min Req: 1), Server Ver:1 (Min Req: 1)
+
+epoch 9: [DAgger] train loss:0.00323403878231
+Connected!
+Client Ver:1 (Min Req: 1), Server Ver:1 (Min Req: 1)
+
+epoch 10: [DAgger] train loss:0.00340837559128
+Connected!
+Client Ver:1 (Min Req: 1), Server Ver:1 (Min Req: 1)
+
+epoch 11: [DAgger] train loss:0.00352062773328
+Connected!
+Client Ver:1 (Min Req: 1), Server Ver:1 (Min Req: 1)
+
+epoch 12: [DAgger] train loss:0.00453107862553
+Connected!
+Client Ver:1 (Min Req: 1), Server Ver:1 (Min Req: 1)
+
+epoch 13: [DAgger] train loss:0.0053111178418
+Connected!
+Client Ver:1 (Min Req: 1), Server Ver:1 (Min Req: 1)
+
+epoch 14: [DAgger] train loss:0.0049837659837
+Connected!
+Client Ver:1 (Min Req: 1), Server Ver:1 (Min Req: 1)
+
+epoch 15: [DAgger] train loss:0.00500533767416
+Connected!
+Client Ver:1 (Min Req: 1), Server Ver:1 (Min Req: 1)
+
+epoch 16: [DAgger] train loss:0.00496373343786
+Connected!
+Client Ver:1 (Min Req: 1), Server Ver:1 (Min Req: 1)
+
+epoch 17: [DAgger] train loss:0.00610275502148
+Connected!
+Client Ver:1 (Min Req: 1), Server Ver:1 (Min Req: 1)
+
+epoch 18: [DAgger] train loss:0.00616087303047
+Connected!
+Client Ver:1 (Min Req: 1), Server Ver:1 (Min Req: 1)
+
+epoch 19: [DAgger] train loss:0.0057667316614
+Connected!
+Client Ver:1 (Min Req: 1), Server Ver:1 (Min Req: 1)
+
+epoch 20: [DAgger] train loss:0.00611209563507
+Connected!
+Client Ver:1 (Min Req: 1), Server Ver:1 (Min Req: 1)
+
+epoch 21: [DAgger] train loss:0.00619990854143
+Connected!
+Client Ver:1 (Min Req: 1), Server Ver:1 (Min Req: 1)
+
+epoch 22: [DAgger] train loss:0.00603773423346
+Connected!
+Client Ver:1 (Min Req: 1), Server Ver:1 (Min Req: 1)
+
+epoch 23: [DAgger] train loss:0.00618640227224
+Connected!
+Client Ver:1 (Min Req: 1), Server Ver:1 (Min Req: 1)
+
+epoch 24: [DAgger] train loss:0.00617584526188
+Connected!
+Client Ver:1 (Min Req: 1), Server Ver:1 (Min Req: 1)
+
+epoch 25: [DAgger] train loss:0.00613473795068
+Connected!
+Client Ver:1 (Min Req: 1), Server Ver:1 (Min Req: 1)
+
+epoch 26: [DAgger] train loss:0.00614052038959
+Connected!
+Client Ver:1 (Min Req: 1), Server Ver:1 (Min Req: 1)
+
+epoch 27: [DAgger] train loss:0.00622014952873
+Connected!
+Client Ver:1 (Min Req: 1), Server Ver:1 (Min Req: 1)
+
+epoch 28: [DAgger] train loss:0.00620608080432
+Connected!
+Client Ver:1 (Min Req: 1), Server Ver:1 (Min Req: 1)
+
+epoch 29: [DAgger] train loss:0.00636708392575
+Connected!
+Client Ver:1 (Min Req: 1), Server Ver:1 (Min Req: 1)
+
+epoch 30: [DAgger] train loss:0.00622851710638
+Connected!
+Client Ver:1 (Min Req: 1), Server Ver:1 (Min Req: 1)
+
+epoch 31: [DAgger] train loss:0.00606964785242
+Connected!
+Client Ver:1 (Min Req: 1), Server Ver:1 (Min Req: 1)
+
+epoch 32: [DAgger] train loss:0.00597250571912
+Connected!
+Client Ver:1 (Min Req: 1), Server Ver:1 (Min Req: 1)
+
+epoch 33: [DAgger] train loss:0.00583140123642
+Connected!
+Client Ver:1 (Min Req: 1), Server Ver:1 (Min Req: 1)
+
+epoch 34: [DAgger] train loss:0.00570606360981
+Connected!
+Client Ver:1 (Min Req: 1), Server Ver:1 (Min Req: 1)
+
+epoch 35: [DAgger] train loss:0.00560789574604
+Connected!
+Client Ver:1 (Min Req: 1), Server Ver:1 (Min Req: 1)
+
+epoch 36: [DAgger] train loss:0.00546181397075
+Connected!
+Client Ver:1 (Min Req: 1), Server Ver:1 (Min Req: 1)
+
+epoch 37: [DAgger] train loss:0.00534250301211
+Connected!
+Client Ver:1 (Min Req: 1), Server Ver:1 (Min Req: 1)
+
+epoch 38: [DAgger] train loss:0.00525607491673
+Connected!
+Client Ver:1 (Min Req: 1), Server Ver:1 (Min Req: 1)
+
+epoch 39: [DAgger] train loss:0.00514882269083
+Connected!
+Client Ver:1 (Min Req: 1), Server Ver:1 (Min Req: 1)
+
+epoch 40: [DAgger] train loss:0.00503948230548
+Connected!
+Client Ver:1 (Min Req: 1), Server Ver:1 (Min Req: 1)
+

@@ -23,8 +23,8 @@ import racing_utils
 # DEFINE DEPLOYMENT META PARAMETERS
 
 # policy options: bc_con, bc_unc, bc_img, bc_reg, bc_full
-policy_type = "bc_con"
-gate_noise = 3.0
+policy_type = "bc_img"
+gate_noise = 0.0
 
 ###########################################
 
@@ -162,6 +162,12 @@ if __name__ == "__main__":
         training_mode = "latent"
         latent_space_constraints = True
         bc_weights_path = "model_outputs/bc_img/bc_model_100.ckpt"
+        feature_weights_path = "model_outputs/cmvae_img/cmvae_model_45.ckpt"
+        capsule_network = False
+    elif policy_type == "dagger_img":
+        training_mode = "latent"
+        latent_space_constraints = True
+        bc_weights_path = "model_outputs/dagger_img/dagger_model_40.ckpt"
         feature_weights_path = "model_outputs/cmvae_img/cmvae_model_45.ckpt"
         capsule_network = False
     elif policy_type == "bc_reg":

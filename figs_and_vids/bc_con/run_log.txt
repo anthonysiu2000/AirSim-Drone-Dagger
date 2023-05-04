@@ -120,3 +120,13 @@ Avg network time over 50 iterations: 25.0518321991 ms | 39.9172400666 Hz
 Avg loop time over 50 iterations: 49.1680669785 ms | 20.3384037944 Hz
 Avg network time over 50 iterations: 25.2709436417 ms | 39.5711380699 Hz
 Avg loop time over 50 iterations: 50.1420068741 ms | 19.9433581211 Hz
+
+noise = 1:
+2/24: flew off track
+1/24: flew off track
+24/24
+24/24
+5/24: flew off track
+0/24: got stuck
+0/24: got stuck
+
